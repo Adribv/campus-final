@@ -90,6 +90,13 @@ export default {
           ]
         },
         initialValue: 'upcoming'
-      }
+      },
+      {
+        name: 'sheet',
+        title: 'sheet link',
+        type: 'string',
+        validation: Rule => Rule.required()
+      },
+
     ]
   }
