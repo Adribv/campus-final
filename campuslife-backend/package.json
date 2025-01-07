@@ -1,0 +1,46 @@
+{
+  "name": "campuslife-backend",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "node index.js",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "deploy-graphql": "sanity graphql deploy",
+    "backend-dev": "nodemon index.js"
+  },
+  "keywords": [
+    "sanity",
+    "backend",
+    "events"
+  ],
+  "dependencies": {
+    "@sanity/vision": "^3.68.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sanity": "^3.68.3",
+    "styled-components": "^6.1.8",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@sanity/eslint-config-studio": "^5.0.1",
+    "@types/react": "^18.0.25",
+    "eslint": "^9.9.0",
+    "nodemon": "^3.0.0",
+    "prettier": "^3.0.2",
+    "typescript": "^5.1.6"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 100,
+    "bracketSpacing": false,
+    "singleQuote": true
+  }
+}

@@ -1,0 +1,70 @@
+/* Light Theme (default) */
+:root {
+    --primary-color: #ff4081;
+    --secondary-color: #3f51b5;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --bg-primary: #fff;
+    --bg-secondary: #f5f5f5;
+}
+
+/* Dark Theme */
+body.dark-theme {
+    --primary-color: #ff80ab;
+    --secondary-color: #7986cb;
+    --accent-color: #b388ff;
+    --text-primary: #fff;
+    --text-secondary: #ccc;
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --gradient-1: linear-gradient(45deg, #ff80ab, #b388ff);
+    --gradient-2: linear-gradient(135deg, #0f172a, #312e81);
+}
+
+body.dark-theme nav {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme .person-card {
+    background: #1e1e1e;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+body.dark-theme .person-info {
+    background: rgba(30,30,30,0.95);
+}
+
+/* Theme Switch Styles */
+.theme-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    background: rgba(255,255,255,0.1);
+    padding: 1rem;
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.theme-switch:hover {
+    transform: scale(1.1);
+}
+
+.theme-switch i {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    transition: transform 0.5s ease;
+}
+
+body.dark-theme .theme-switch i {
+    transform: rotate(360deg);
+}
+
+/* Remove old switch styles */
+.switch,
+.slider,
+.switch input {
+    display: none;
+} 
