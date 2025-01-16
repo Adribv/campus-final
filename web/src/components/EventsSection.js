@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { client } from '../lib/sanity'; // Adjust the import path
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 const EventsSection = () => {
   const [slides, setSlides] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Fetch slides from Sanity
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const query = `*[_type == "homepageSlide"] | order(order asc) {
-          title,
-          "imageUrl": image.asset->url,
-          order
-        }`;
-        const fetchedSlides = await client.fetch(query);
+        const slidesRef = collection(db, 'homepageSlides');
+        const q = query(slidesRef, orderBy('order', 'asc'));
+        const querySnapshot = await getDocs(q);
+        
+        const fetchedSlides = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
         setSlides(fetchedSlides);
       } catch (error) {
         console.error('Error fetching slides:', error);
@@ -23,7 +26,6 @@ const EventsSection = () => {
 
     fetchSlides();
   }, []);
-
   // Auto-advance slides
   useEffect(() => {
     if (slides.length === 0) return;
@@ -63,7 +65,7 @@ const EventsSection = () => {
         <div className="carousel-inner">
           {slides.map((slide, index) => (
             <div
-              key={index}
+              key={slide.id}
               className={`carousel-item ${index === currentSlide ? 'active' : ''}`}
             >
               <img 
@@ -77,7 +79,6 @@ const EventsSection = () => {
             </div>
           ))}
         </div>
-
         <button 
           className="carousel-control prev" 
           onClick={prevSlide}

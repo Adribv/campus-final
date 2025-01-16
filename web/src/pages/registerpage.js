@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { client } from '../lib/sanity';
+import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 export default function RegistrationPage() {
   const { slug } = useParams();
@@ -16,16 +17,23 @@ export default function RegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const query = `*[_type == "event" && slug.current == $slug][0]{
-      title
-    }`;
-    client.fetch(query, { slug }).then((data) => {
-      if (data?.title) {
-        setEventName(data.title);
+    const fetchEventDetails = async () => {
+      try {
+        const eventsRef = collection(db, 'events');
+        const q = query(eventsRef, where('slug', '==', slug));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const eventData = querySnapshot.docs[0].data();
+          setEventName(eventData.title);
+        }
+      } catch (error) {
+        console.error('Error fetching event:', error);
       }
-    });
-  }, [slug]);
+    };
 
+    fetchEventDetails();
+  }, [slug]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -37,40 +45,43 @@ export default function RegistrationPage() {
     setStatus('loading');
 
     try {
-      const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbxcMH8a8KWZDU6AbbSXI93JLRhFrxDEgUYsjJMqjmxYANsxHJljOC-SVV727HsDfidwQQ/exec',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            ...formData,
-            eventName,
-            registrationDate: new Date().toISOString(),
-          }),
-        }
-      );
+      // Add registration to Firestore
+      const registrationsRef = collection(db, 'registrations');
+      await addDoc(registrationsRef, {
+        ...formData,
+        eventName,
+        eventSlug: slug,
+        registrationDate: new Date(),
+      });
 
-      if (response.ok) {
-        setStatus('success');
-        setFormData({
-          studentName: '',
-          email: '',
-          registrationNumber: '',
-          department: '',
-          phoneNumber: '',
-        });
-      } else {
-        setStatus('error');
-      }
+      // Still keep the Google Sheets integration if needed
+      await fetch('your-google-script-url', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...formData,
+          eventName,
+          registrationDate: new Date().toISOString(),
+        }),
+      });
+
+      setStatus('success');
+      setFormData({
+        studentName: '',
+        email: '',
+        registrationNumber: '',
+        department: '',
+        phoneNumber: '',
+      });
     } catch (error) {
+      console.error('Error submitting registration:', error);
       setStatus('error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!eventName) {
-    return <div>Loading event details...</div>;
-  }
+
+
 
   return (
     <div className="registration-container">
